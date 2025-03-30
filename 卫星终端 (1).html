@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GTV601车载卫星通信终端</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+primary: '#0052CC',
+secondary: '#FF6B00',
+accent: {
+blue: '#3B82F6',
+orange: '#FF6B00',
+green: '#10B981',
+purple: '#8B5CF6'
+}
+},
+borderRadius: {
+'none': '0px',
+'sm': '2px',
+DEFAULT: '4px',
+'md': '8px',
+'lg': '12px',
+'xl': '16px',
+'2xl': '20px',
+'3xl': '24px',
+'full': '9999px',
+'button': '4px'
+}
+}
+}
+}
+</script>
+<style>
+body {
+background: linear-gradient(180deg, #000B1F 0%, #001F4D 100%);
+color: #FFFFFF;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+.nav-blur {
+backdrop-filter: blur(10px);
+background: rgba(0, 11, 31, 0.8);
+}
+.card-blur {
+backdrop-filter: blur(5px);
+background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-primary {
+background: #FF6B00;
+color: white;
+transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+background: #FF8533;
+transform: translateY(-1px);
+}
+
+.icon-feature {
+font-size: 24px;
+background: linear-gradient(45deg, #FF6B00, #FF8533);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+/* 响应式布局样式 */
+@media (min-width: 768px) {
+.container {
+max-width: 1200px;
+margin: 0 auto;
+}
+}
+
+/* 移动端菜单样式 */
+.mobile-menu {
+transform: translateX(100%);
+transition: transform 0.3s ease-in-out;
+}
+.mobile-menu.active {
+transform: translateX(0);
+}
+
+/* 响应式网格布局 */
+@media (min-width: 768px) {
+.feature-grid {
+grid-template-columns: repeat(3, 1fr);
+}
+.scene-grid {
+grid-template-columns: repeat(2, 1fr);
+}
+}
+
+@media (min-width: 1024px) {
+.scene-grid {
+grid-template-columns: repeat(4, 1fr);
+}
+}
+
+/* 隐藏滚动条但保持可滚动 */
+.hide-scrollbar {
+scrollbar-width: none;
+-ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+display: none;
+}
+
+/* 视频容器比例 */
+.aspect-video {
+aspect-ratio: 16 / 9;
+}
+
+.max-w-full {
+max-width: 100%;
+}
+.max-h-full {
+max-height: 100%;
+}
+
+@media (min-width: 640px) {
+.grid-cols-2 {
+grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+}
+
+/* 语言切换开关样式 */
+.lang-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 28px;
+    margin-right: 1rem;
+}
+
+.lang-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.lang-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 107, 0, 0.2);
+    transition: .4s;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    color: #FF6B00;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.lang-switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #FF6B00;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .lang-switch-slider {
+    background-color: rgba(255, 107, 0, 0.2);
+}
+
+input:checked + .lang-switch-slider:before {
+    transform: translateX(32px);
+}
+
+.lang-switch-text {
+    z-index: 1;
+    transition: .4s;
+}
+
+.lang-switch-text.zh {
+    opacity: 1;
+}
+
+.lang-switch-text.en {
+    opacity: 0.5;
+}
+
+input:checked ~ .lang-switch-slider .lang-switch-text.zh {
+    opacity: 0.5;
+}
+
+input:checked ~ .lang-switch-slider .lang-switch-text.en {
+    opacity: 1;
+}
+</style>
+</head>
+<body class="min-h-screen">
+<!-- 导航栏 -->
+<nav class="nav-blur fixed top-0 w-full z-50 px-4 py-3">
+<div class="container mx-auto flex items-center justify-between">
+<div class="h-8">
+<img src="https://laneposition.com/wp-content/themes/geespace/img/lp/logo.png" alt="Logo" class="h-full">
+</div>
+
+<!-- 桌面端导航 -->
+<div class="hidden md:flex items-center space-x-6">
+<a href="#features" class="text-white hover:text-[#FF6B00] transition-colors lang-zh">产品特点</a>
+<a href="#features" class="text-white hover:text-[#FF6B00] transition-colors lang-en hidden">Features</a>
+<a href="#scenes" class="text-white hover:text-[#FF6B00] transition-colors lang-zh">应用场景</a>
+<a href="#scenes" class="text-white hover:text-[#FF6B00] transition-colors lang-en hidden">Scenarios</a>
+<a href="#videos" class="text-white hover:text-[#FF6B00] transition-colors lang-zh">相关视频</a>
+<a href="#videos" class="text-white hover:text-[#FF6B00] transition-colors lang-en hidden">Videos</a>
+<a href="#market" class="text-white hover:text-[#FF6B00] transition-colors lang-zh">市场前景</a>
+<a href="#market" class="text-white hover:text-[#FF6B00] transition-colors lang-en hidden">Market</a>
+<a href="#specs" class="text-white hover:text-[#FF6B00] transition-colors lang-zh">产品规格</a>
+<a href="#specs" class="text-white hover:text-[#FF6B00] transition-colors lang-en hidden">Specifications</a>
+<a href="#cases" class="text-white hover:text-[#FF6B00] transition-colors lang-zh">应用案例</a>
+<a href="#cases" class="text-white hover:text-[#FF6B00] transition-colors lang-en hidden">Cases</a>
+<button onclick="showQRCode()" class="btn-primary !rounded-button px-6 py-2 text-sm font-medium lang-zh">立即咨询</button>
+<button onclick="showQRCode()" class="btn-primary !rounded-button px-6 py-2 text-sm font-medium lang-en hidden">Contact Us</button>
+</div>
+
+<div class="flex items-center">
+<!-- 语言切换按钮 -->
+<label class="lang-switch">
+    <input type="checkbox" id="langToggle">
+    <div class="lang-switch-slider">
+        <span class="lang-switch-text zh">中</span>
+        <span class="lang-switch-text en">EN</span>
+    </div>
+</label>
+<!-- 移动端菜单按钮 -->
+<button class="md:hidden text-[#FF6B00]" id="menuBtn">
+<i class="fas fa-bars text-xl"></i>
+</button>
+</div>
+</div>
+</nav>
+
+<!-- 移动端菜单 -->
+<div class="mobile-menu fixed top-[60px] right-0 w-64 h-[calc(100vh-60px)] bg-[#000B1F] p-4 z-40">
+<div class="flex flex-col space-y-4">
+<a href="#features" class="text-white hover:text-[#FF6B00] transition-colors lang-zh">产品特点</a>
+<a href="#features" class="text-white hover:text-[#FF6B00] transition-colors lang-en hidden">Features</a>
+<a href="#scenes" class="text-white hover:text-[#FF6B00] transition-colors lang-zh">应用场景</a>
+<a href="#scenes" class="text-white hover:text-[#FF6B00] transition-colors lang-en hidden">Scenarios</a>
+<a href="#videos" class="text-white hover:text-[#FF6B00] transition-colors lang-zh">相关视频</a>
+<a href="#videos" class="text-white hover:text-[#FF6B00] transition-colors lang-en hidden">Videos</a>
+<a href="#market" class="text-white hover:text-[#FF6B00] transition-colors lang-zh">市场前景</a>
+<a href="#market" class="text-white hover:text-[#FF6B00] transition-colors lang-en hidden">Market</a>
+<a href="#specs" class="text-white hover:text-[#FF6B00] transition-colors lang-zh">产品规格</a>
+<a href="#specs" class="text-white hover:text-[#FF6B00] transition-colors lang-en hidden">Specifications</a>
+<a href="#cases" class="text-white hover:text-[#FF6B00] transition-colors lang-zh">应用案例</a>
+<a href="#cases" class="text-white hover:text-[#FF6B00] transition-colors lang-en hidden">Cases</a>
+<button onclick="showQRCode()" class="btn-primary !rounded-button px-4 py-2 text-sm font-medium lang-zh">立即咨询</button>
+<button onclick="showQRCode()" class="btn-primary !rounded-button px-4 py-2 text-sm font-medium lang-en hidden">Contact Us</button>
+</div>
+</div>
+
+<main class="pt-[60px]">
+<!-- 主视觉区域 -->
+<section class="relative h-[280px] md:h-[400px] lg:h-[500px] overflow-hidden">
+<div class="absolute inset-0 w-full h-full bg-[#1A1A1A] flex items-center justify-center">
+<img src="https://img.picui.cn/free/2025/03/27/67e4a68630838.gif"
+alt="GTV601车载卫星通信终端360度展示"
+class="w-full h-full object-cover md:object-contain">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-[#000B1F] via-[rgba(0,11,31,0.2)] to-transparent pointer-events-none"></div>
+<div class="container mx-auto relative h-full flex flex-col justify-end pb-4 md:pb-8 px-4">
+<h1 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 text-white lang-zh">时空星语 GTV601 卫星通信终端</h1>
+<h1 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 text-white lang-en hidden">SkyLink Navigator GTV601 Satellite Terminal</h1>
+<p class="text-sm md:text-base text-gray-200 lang-zh">连接天地，守护无界</p>
+<p class="text-sm md:text-base text-gray-200 lang-en hidden">Connect Sky and Earth, Secure Without Boundaries</p>
+</div>
+</section>
+
+<!-- 产品优势 -->
+<section class="px-4 py-6 md:py-12">
+<div class="container mx-auto">
+<h2 class="text-lg md:text-2xl font-bold mb-4 md:mb-8 lang-zh">产品优势</h2>
+<h2 class="text-lg md:text-2xl font-bold mb-4 md:mb-8 lang-en hidden">Product Advantages</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+<div class="card-blur p-4 rounded-lg">
+<div class="flex items-center mb-3">
+<i class="fas fa-microchip icon-feature mr-3"></i>
+<div>
+<h3 class="text-sm font-medium lang-zh">先进芯片技术</h3>
+<h3 class="text-sm font-medium lang-en hidden">Advanced Chip Technology</h3>
+<p class="text-xs text-gray-300 mt-1 lang-zh">自主研发高性能处理芯片</p>
+<p class="text-xs text-gray-300 mt-1 lang-en hidden">Self-developed high-performance processing chip</p>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-3 mt-2">
+<div class="text-center">
+<p class="text-lg font-bold">40%</p>
+<p class="text-xs text-gray-300 lang-zh">体积缩减</p>
+<p class="text-xs text-gray-300 lang-en hidden">Volume Reduction</p>
+</div>
+<div class="text-center">
+<p class="text-lg font-bold">60%</p>
+<p class="text-xs text-gray-300 lang-zh">功耗降低</p>
+<p class="text-xs text-gray-300 lang-en hidden">Power Consumption Reduction</p>
+</div>
+<div class="text-center">
+<p class="text-lg font-bold lang-zh">2倍</p>
+<p class="text-lg font-bold lang-en hidden">2x</p>
+<p class="text-xs text-gray-300 lang-zh">性能提升</p>
+<p class="text-xs text-gray-300 lang-en hidden">Performance Improvement</p>
+</div>
+</div>
+</div>
+<div class="card-blur p-4 rounded-lg">
+<div class="flex items-center mb-3">
+<i class="fas fa-satellite-dish icon-feature mr-3"></i>
+<div>
+<h3 class="text-sm font-medium lang-zh">多频段覆盖</h3>
+<h3 class="text-sm font-medium lang-en hidden">Multi-band Coverage</h3>
+<p class="text-xs text-gray-300 mt-1 lang-zh">兼容多种卫星通信系统</p>
+<p class="text-xs text-gray-300 mt-1 lang-en hidden">Compatible with multiple satellite communication systems</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3 mt-2">
+<div class="text-center">
+<p class="text-lg font-bold">99.9%</p>
+<p class="text-xs text-gray-300 lang-zh">信号覆盖率</p>
+<p class="text-xs text-gray-300 lang-en hidden">Signal Coverage</p>
+</div>
+<div class="text-center">
+<p class="text-lg font-bold">＜50ms</p>
+<p class="text-xs text-gray-300 lang-zh">平均延迟</p>
+<p class="text-xs text-gray-300 lang-en hidden">Average Latency</p>
+</div>
+</div>
+</div>
+<div class="card-blur p-4 rounded-lg">
+<div class="flex items-center mb-3">
+<i class="fas fa-shield-alt icon-feature mr-3"></i>
+<div>
+<h3 class="text-sm font-medium lang-zh">全方位防护</h3>
+<h3 class="text-sm font-medium lang-en hidden">Comprehensive Protection</h3>
+<p class="text-xs text-gray-300 mt-1 lang-zh">军工级防护标准</p>
+<p class="text-xs text-gray-300 mt-1 lang-en hidden">Military-grade protection standards</p>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-3 mt-2">
+<div class="text-center">
+<p class="text-lg font-bold">IP67</p>
+<p class="text-xs text-gray-300 lang-zh">防水防尘</p>
+<p class="text-xs text-gray-300 lang-en hidden">Water & Dust Proof</p>
+</div>
+<div class="text-center">
+<p class="text-lg font-bold">-40℃</p>
+<p class="text-xs text-gray-300 lang-zh">低温适应</p>
+<p class="text-xs text-gray-300 lang-en hidden">Low Temperature Resistance</p>
+</div>
+<div class="text-center">
+<p class="text-lg font-bold">3米</p>
+<p class="text-xs text-gray-300 lang-zh">抗跌落</p>
+<p class="text-xs text-gray-300 lang-en hidden">Drop Resistance</p>
+</div>
+</div>
+</div>
+<div class="card-blur p-4 rounded-lg">
+<div class="flex items-center mb-3">
+<i class="fas fa-bolt icon-feature mr-3"></i>
+<div>
+<h3 class="text-sm font-medium lang-zh">智能供电</h3>
+<h3 class="text-sm font-medium lang-en hidden">Smart Power Supply</h3>
+<p class="text-xs text-gray-300 mt-1 lang-zh">多重供电保障</p>
+<p class="text-xs text-gray-300 mt-1 lang-en hidden">Multiple power supply protection</p>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-3 mt-2">
+<div class="text-center">
+<p class="text-lg font-bold">72h</p>
+<p class="text-xs text-gray-300 lang-zh">续航时长</p>
+<p class="text-xs text-gray-300 lang-en hidden">Battery Life</p>
+</div>
+<div class="text-center">
+<p class="text-lg font-bold">30min</p>
+<p class="text-xs text-gray-300 lang-zh">快充时间</p>
+<p class="text-xs text-gray-300 lang-en hidden">Fast Charging</p>
+</div>
+<div class="text-center">
+<p class="text-lg font-bold">12V</p>
+<p class="text-xs text-gray-300 lang-zh">车载供电</p>
+<p class="text-xs text-gray-300 lang-en hidden">Vehicle Power Supply</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 应用场景 -->
+<section id="scenes" class="px-4 py-6 md:py-12 bg-[#001433]">
+<div class="container mx-auto">
+<h2 class="text-lg md:text-2xl font-bold mb-4 md:mb-8 lang-zh">应用场景</h2>
+<h2 class="text-lg md:text-2xl font-bold mb-4 md:mb-8 lang-en hidden">Application Scenarios</h2>
+<div class="grid grid-cols-2 gap-4 md:gap-6 max-w-4xl mx-auto">
+<!-- 户外越野 -->
+<div class="card-blur rounded-lg overflow-hidden group hover:scale-[1.02] transition-transform">
+<img src="https://24976355.s21i.faiusr.com/2/2/ABUIABACGAAgj_iNigYosJ_EjgEwggo41gY.jpg"
+class="w-full h-[160px] md:h-[200px] object-cover transition-transform group-hover:scale-105" alt="户外越野">
+<div class="p-3 md:p-4">
+<h3 class="text-base font-medium mb-1 lang-zh">户外越野</h3>
+<h3 class="text-base font-medium mb-1 lang-en hidden">Off-road Adventure</h3>
+<p class="text-xs md:text-sm text-gray-300 lang-zh">无信号区域实时导航与通信保障</p>
+<p class="text-xs md:text-sm text-gray-300 lang-en hidden">Real-time navigation and communication in no-signal areas</p>
+</div>
+</div>
+
+<!-- 极限救援 -->
+<div class="card-blur rounded-lg overflow-hidden group hover:scale-[1.02] transition-transform">
+<img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.QYwiYORv1jrkZ-L7vtRWQAHaEK?rs=1&pid=ImgDetMain"
+class="w-full h-[160px] md:h-[200px] object-cover transition-transform group-hover:scale-105" alt="极限救援">
+<div class="p-3 md:p-4">
+<h3 class="text-base font-medium mb-1 lang-zh">极限救援</h3>
+<h3 class="text-base font-medium mb-1 lang-en hidden">Emergency Rescue</h3>
+<p class="text-xs md:text-sm text-gray-300 lang-zh">应急救援实时数据传输与指挥</p>
+<p class="text-xs md:text-sm text-gray-300 lang-en hidden">Real-time data transmission and command for emergency rescue</p>
+</div>
+</div>
+
+<!-- 海上作业 -->
+<div class="card-blur rounded-lg overflow-hidden group hover:scale-[1.02] transition-transform">
+<img src="https://ai-public.mastergo.com/ai/img_res/ee59b44f7dfa53ea44316585c1f4f139.jpg"
+class="w-full h-[160px] md:h-[200px] object-cover transition-transform group-hover:scale-105" alt="海上作业">
+<div class="p-3 md:p-4">
+<h3 class="text-base font-medium mb-1 lang-zh">海上作业</h3>
+<h3 class="text-base font-medium mb-1 lang-en hidden">Maritime Operations</h3>
+<p class="text-xs md:text-sm text-gray-300 lang-zh">远洋通信与船舶定位追踪</p>
+<p class="text-xs md:text-sm text-gray-300 lang-en hidden">Ocean communication and vessel tracking</p>
+</div>
+</div>
+
+<!-- 探险考察 -->
+<div class="card-blur rounded-lg overflow-hidden group hover:scale-[1.02] transition-transform">
+<img src="https://ai-public.mastergo.com/ai/img_res/ac125ed73c7b5ae40e5cf076a11ba0d9.jpg"
+class="w-full h-[160px] md:h-[200px] object-cover transition-transform group-hover:scale-105" alt="探险考察">
+<div class="p-3 md:p-4">
+<h3 class="text-base font-medium mb-1 lang-zh">探险考察</h3>
+<h3 class="text-base font-medium mb-1 lang-en hidden">Exploration & Research</h3>
+<p class="text-xs md:text-sm text-gray-300 lang-zh">野外科考数据实时回传与定位</p>
+<p class="text-xs md:text-sm text-gray-300 lang-en hidden">Real-time data transmission and positioning for field research</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 相关视频 -->
+<section id="videos" class="px-4 py-6 md:py-12">
+<div class="container mx-auto">
+<h2 class="text-lg md:text-2xl font-bold mb-4 md:mb-8 lang-zh">相关视频</h2>
+<h2 class="text-lg md:text-2xl font-bold mb-4 md:mb-8 lang-en hidden">Related Videos</h2>
+<div class="relative">
+<!-- 滚动容器 -->
+<div class="overflow-x-auto hide-scrollbar">
+<div class="flex space-x-6" style="width: fit-content">
+<!-- 视频1 -->
+<div class="card-blur rounded-lg overflow-hidden group w-[360px]">
+<div class="relative" style="padding-top: 56.25%;">
+<iframe src="https://player.bilibili.com/player.html?aid=961991687&bvid=BV15H4y1o7oz&cid=1294855941&page=1&high_quality=1&danmaku=0" 
+frameborder="0"
+scrolling="no"
+allowfullscreen="true"
+style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+</div>
+<div class="p-4">
+<h3 class="text-base font-medium mb-2 lang-zh">未来智慧出行，即刻出发！</h3>
+<h3 class="text-base font-medium mb-2 lang-en hidden">Smart Future Mobility, Start Now!</h3>
+<p class="text-sm text-gray-300 line-clamp-2 lang-zh">全球最快量产卫星互联网乘用车——极氪 001 FR发布。时空道宇联合极氪率先实现车载卫星通信功能，提供双向卫星消息与卫星通话服务。</p>
+<p class="text-sm text-gray-300 line-clamp-2 lang-en hidden">The world's fastest mass-produced satellite internet passenger vehicle - Zeekr 001 FR is launched. Lane Position and Zeekr take the lead in implementing vehicle satellite communication functions, providing two-way satellite messaging and satellite call services.</p>
+</div>
+</div>
+
+<!-- 视频2 -->
+<div class="card-blur rounded-lg overflow-hidden group w-[360px]">
+<div class="relative" style="padding-top: 56.25%;">
+<iframe src="https://player.bilibili.com/player.html?aid=113446007938901&bvid=BV1oZDRYJE4p&cid=26666339390&page=1&high_quality=1&danmaku=0" 
+frameborder="0"
+scrolling="no"
+allowfullscreen="true"
+style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+</div>
+<div class="p-4">
+<h3 class="text-base font-medium mb-2 lang-zh">一箭10星，圆满成功！</h3>
+<h3 class="text-base font-medium mb-2 lang-en hidden">10 Satellites in One Launch, Complete Success!</h3>
+<p class="text-sm text-gray-300 line-clamp-2 lang-zh">探索太空新领域，推动航天技术发展。</p>
+<p class="text-sm text-gray-300 line-clamp-2 lang-en hidden">Exploring new frontiers in space, advancing aerospace technology.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 滚动指示器 -->
+<div class="hidden md:flex justify-center mt-4 space-x-2">
+<div class="w-2 h-2 rounded-full bg-[#FF6B00] opacity-50"></div>
+<div class="w-2 h-2 rounded-full bg-[#FF6B00] opacity-50"></div>
+</div>
+
+<!-- 滚动箭头 -->
+<button class="hidden md:flex absolute -left-4 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-[#FF6B00] rounded-full items-center justify-center opacity-50 hover:opacity-100 transition-opacity">
+<i class="fas fa-chevron-left text-white"></i>
+</button>
+<button class="hidden md:flex absolute -right-4 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-[#FF6B00] rounded-full items-center justify-center opacity-50 hover:opacity-100 transition-opacity">
+<i class="fas fa-chevron-right text-white"></i>
+</button>
+</div>
+</div>
+</section>
+
+<!-- 市场前景分析 -->
+<section id="market" class="px-4 py-12 md:py-16 bg-[#001433] border-t border-b border-[#FF6B00]/20">
+<div class="container mx-auto">
+<div class="relative">
+<div class="absolute -top-2 left-0 w-20 h-[2px] bg-gradient-to-r from-[#FF6B00] to-transparent"></div>
+<h2 class="text-lg md:text-2xl font-bold mb-2 lang-zh">车载卫星通信市场前景分析</h2>
+<h2 class="text-lg md:text-2xl font-bold mb-2 lang-en hidden">Market Prospect Analysis of Vehicle Satellite Communication</h2>
+<p class="text-sm text-gray-300 mb-8 lang-zh">洞察未来出行技术革新与市场机遇</p>
+<p class="text-sm text-gray-300 mb-8 lang-en hidden">Insights into Future Mobility Technology Innovation and Market Opportunities</p>
+</div>
+
+<!-- 政策支持 -->
+<div class="card-blur p-6 rounded-lg mb-6 border border-[#FF6B00]/10 hover:border-[#FF6B00]/20 transition-colors">
+<div class="flex items-center mb-4">
+<i class="fas fa-file-alt icon-feature mr-3"></i>
+<h3 class="text-lg font-medium lang-zh">政策支持</h3>
+<h3 class="text-lg font-medium lang-en hidden">Policy Support</h3>
+</div>
+
+<div class="space-y-6">
+<div>
+<h4 class="text-base font-medium mb-2 lang-zh">国家政策</h4>
+<h4 class="text-base font-medium mb-2 lang-en hidden">National Policy</h4>
+<p class="text-sm text-gray-300 lang-zh">《关于创新低轨道通信卫星星座优化频谱使用的通知（征求意见稿）》加快推广"大规模低轨卫星服务开发、分步骤、分阶段推进卫星与地面网络业务深入融合改革。</p>
+<p class="text-sm text-gray-300 lang-en hidden">The "Notice on Optimizing Spectrum Usage for Innovative Low-Orbit Communication Satellite Constellations (Draft for Comments)" accelerates the promotion of "large-scale low-orbit satellite service development, step-by-step and phased promotion of deep integration reform between satellite and ground network services.</p>
+<p class="text-sm text-gray-300 mt-2 lang-zh">工信部鼓励车辆配置优化升级北斗终端，提升车辆北斗车载终端的渗透率。</p>
+<p class="text-sm text-gray-300 mt-2 lang-en hidden">The Ministry of Industry and Information Technology encourages vehicle configuration optimization and upgrading of Beidou terminals to improve the penetration rate of Beidou vehicle terminals.</p>
+</div>
+
+<div>
+<h4 class="text-base font-medium mb-2 lang-zh">地方政策</h4>
+<h4 class="text-base font-medium mb-2 lang-en hidden">Local Policy</h4>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="card-blur p-4 rounded-lg">
+<h5 class="text-sm font-medium mb-2 lang-zh">上海市</h5>
+<h5 class="text-sm font-medium mb-2 lang-en hidden">Shanghai</h5>
+<p class="text-xs text-gray-300 lang-zh">加强卫星通信、导航、遥感一体化发展，推动天地信息一体化转型</p>
+<p class="text-xs text-gray-300 lang-en hidden">Strengthen integrated development of satellite communication, navigation, and remote sensing, promote integrated transformation of space-ground information</p>
+</div>
+<div class="card-blur p-4 rounded-lg">
+<h5 class="text-sm font-medium mb-2 lang-zh">河北省</h5>
+<h5 class="text-sm font-medium mb-2 lang-en hidden">Hebei Province</h5>
+<p class="text-xs text-gray-300 lang-zh">整集空天信息技术、卫星通信、北斗导航、卫星遥感、空天物联等领域</p>
+<p class="text-xs text-gray-300 lang-en hidden">Integrate aerospace information technology, satellite communication, Beidou navigation, satellite remote sensing, and aerospace IoT fields</p>
+</div>
+<div class="card-blur p-4 rounded-lg">
+<h5 class="text-sm font-medium mb-2 lang-zh">广东省</h5>
+<h5 class="text-sm font-medium mb-2 lang-en hidden">Guangdong Province</h5>
+<p class="text-xs text-gray-300 lang-zh">建立完善自动驾驶测试、载运产业发展实验区域以及配套设施</p>
+<p class="text-xs text-gray-300 lang-en hidden">Establish and improve autonomous driving testing, transportation industry development experimental areas and supporting facilities</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 市场数据 -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+<div class="card-blur p-6 rounded-lg border border-[#FF6B00]/10 hover:border-[#FF6B00]/20 transition-colors">
+<div class="flex items-center mb-3">
+<i class="fas fa-chart-line icon-feature mr-3"></i>
+<h3 class="text-base font-medium lang-zh">市场规模</h3>
+<h3 class="text-base font-medium lang-en hidden">Market Size</h3>
+</div>
+<p class="text-2xl font-bold mb-1 lang-zh">2.8万亿元</p>
+<p class="text-2xl font-bold mb-1 lang-en hidden">2.8 Trillion CNY</p>
+<p class="text-xs text-gray-300 lang-zh">2025年中国市场规模预测</p>
+<p class="text-xs text-gray-300 lang-en hidden">2025 China Market Size Forecast</p>
+</div>
+
+<div class="card-blur p-6 rounded-lg border border-[#FF6B00]/10 hover:border-[#FF6B00]/20 transition-colors">
+<div class="flex items-center mb-3">
+<i class="fas fa-car icon-feature mr-3"></i>
+<h3 class="text-base font-medium lang-zh">高端车型渗透率</h3>
+<h3 class="text-base font-medium lang-en hidden">Premium Vehicle Penetration Rate</h3>
+</div>
+<p class="text-2xl font-bold mb-1 lang-zh">52.3万台</p>
+<p class="text-2xl font-bold mb-1 lang-en hidden">523,000 Units</p>
+<p class="text-xs text-gray-300 lang-zh">2026年预测数量</p>
+<p class="text-xs text-gray-300 lang-en hidden">2026 Forecast Quantity</p>
+</div>
+
+<div class="card-blur p-6 rounded-lg border border-[#FF6B00]/10 hover:border-[#FF6B00]/20 transition-colors">
+<div class="flex items-center mb-3">
+<i class="fas fa-box icon-feature mr-3"></i>
+<h3 class="text-base font-medium lang-zh">T-BOX配置率</h3>
+<h3 class="text-base font-medium lang-en hidden">T-BOX Configuration Rate</h3>
+</div>
+<p class="text-2xl font-bold mb-1">93.3%</p>
+<p class="text-xs text-gray-300 lang-zh">2024年市场渗透率</p>
+<p class="text-xs text-gray-300 lang-en hidden">2024 Market Penetration Rate</p>
+</div>
+</div>
+
+<!-- 应用场景与发展趋势 -->
+<div class="card-blur p-6 rounded-lg mb-6 border border-[#FF6B00]/10 hover:border-[#FF6B00]/20 transition-colors">
+<div class="flex items-center mb-4">
+<i class="fas fa-rocket icon-feature mr-3"></i>
+<h3 class="text-lg font-medium lang-zh">应用场景与发展趋势</h3>
+<h3 class="text-lg font-medium lang-en hidden">Application Scenarios and Development Trends</h3>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<h4 class="text-base font-medium mb-3 lang-zh">主要应用场景</h4>
+<h4 class="text-base font-medium mb-3 lang-en hidden">Main Application Scenarios</h4>
+<ul class="space-y-2">
+<li class="flex items-center text-sm text-gray-300">
+<i class="fas fa-check text-[#FF6B00] mr-2"></i>
+<span class="lang-zh">偏远地区通信保障，提供语音通话和数据传输</span>
+<span class="lang-en hidden">Communication guarantee in remote areas, providing voice calls and data transmission</span>
+</li>
+<li class="flex items-center text-sm text-gray-300">
+<i class="fas fa-check text-[#FF6B00] mr-2"></i>
+<span class="lang-zh">紧急情况下的应急救援与自动求助</span>
+<span class="lang-en hidden">Emergency rescue and automatic assistance in critical situations</span>
+</li>
+<li class="flex items-center text-sm text-gray-300">
+<i class="fas fa-check text-[#FF6B00] mr-2"></i>
+<span class="lang-zh">车载状态数据实时共享与上报</span>
+<span class="lang-en hidden">Real-time vehicle status data sharing and reporting</span>
+</li>
+<li class="flex items-center text-sm text-gray-300">
+<i class="fas fa-check text-[#FF6B00] mr-2"></i>
+<span class="lang-zh">支持低空飞行器的实时性监管</span>
+<span class="lang-en hidden">Support real-time monitoring of low-altitude aircraft</span>
+</li>
+</ul>
+</div>
+
+<div>
+<h4 class="text-base font-medium mb-3 lang-zh">发展趋势</h4>
+<h4 class="text-base font-medium mb-3 lang-en hidden">Development Trends</h4>
+<ul class="space-y-2">
+<li class="flex items-center text-sm text-gray-300">
+<i class="fas fa-arrow-trend-up text-[#FF6B00] mr-2"></i>
+<span class="lang-zh">技术融合：T-BOX新增5G、V2X、高精度定位等方向演进</span>
+<span class="lang-en hidden">Technology Integration: T-BOX evolves with 5G, V2X, high-precision positioning, etc.</span>
+</li>
+<li class="flex items-center text-sm text-gray-300">
+<i class="fas fa-arrow-trend-up text-[#FF6B00] mr-2"></i>
+<span class="lang-zh">本土化转型：国产企业崛起，与国际品牌竞争</span>
+<span class="lang-en hidden">Localization Transformation: Domestic enterprises rise to compete with international brands</span>
+</li>
+<li class="flex items-center text-sm text-gray-300">
+<i class="fas fa-arrow-trend-up text-[#FF6B00] mr-2"></i>
+<span class="lang-zh">供应链：高带宽低延迟的卫星网络多样化发展</span>
+<span class="lang-en hidden">Supply Chain: Diversified development of high-bandwidth, low-latency satellite networks</span>
+</li>
+<li class="flex items-center text-sm text-gray-300">
+<i class="fas fa-arrow-trend-up text-[#FF6B00] mr-2"></i>
+<span class="lang-zh">车载卫星通信渗透率持续提升，预计2026年达到52.3万台</span>
+<span class="lang-en hidden">Vehicle satellite communication penetration rate continues to increase, expected to reach 523,000 units by 2026</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- 总结与展望 -->
+<div class="card-blur p-6 rounded-lg border border-[#FF6B00]/10 hover:border-[#FF6B00]/20 transition-colors">
+<div class="flex items-center mb-4">
+<i class="fas fa-lightbulb icon-feature mr-3"></i>
+<h3 class="text-lg font-medium lang-zh">总结与展望</h3>
+<h3 class="text-lg font-medium lang-en hidden">Summary and Outlook</h3>
+</div>
+<p class="text-sm text-gray-300 leading-relaxed lang-zh">
+车载卫星通信技术正朝着更安全、智慧化、集成化的方向发展，将在未来出行领域发挥更重要作用。随着技术的不断成熟和成本的降低，卫星通信有望成为智能汽车重要的基础设施。预计到2026年，将形成"3+N"市场格局（3类主流企业占据60%份额），卫星通信模块有望成为智能汽车第四核心部件（仅次于动力、智能、娱乐系统），在低空经济开放催生上百个新应用场景。企业重点关注技术融合、成本控制、用户体验优化等方面，推动车载卫星通信技术的持续发展与应用。
+</p>
+<p class="text-sm text-gray-300 leading-relaxed lang-en hidden">
+Vehicle satellite communication technology is developing towards safer, smarter, and more integrated solutions, playing an increasingly important role in future mobility. As technology matures and costs decrease, satellite communication is expected to become an important infrastructure for smart vehicles. By 2026, a "3+N" market pattern is expected to form (three mainstream enterprises occupying 60% of the market share), and satellite communication modules are expected to become the fourth core component of smart vehicles (after powertrain, intelligence, and entertainment systems), giving birth to hundreds of new application scenarios in the low-altitude economy. Enterprises focus on technology integration, cost control, user experience optimization, and other aspects to promote the continuous development and application of vehicle satellite communication technology.
+</p>
+</div>
+
+<div class="absolute -bottom-2 right-0 w-20 h-[2px] bg-gradient-to-l from-[#FF6B00] to-transparent"></div>
+</div>
+</section>
+
+<!-- 产品规格 -->
+<section id="specs" class="px-4 py-6 md:py-12">
+<div class="container mx-auto">
+<h2 class="text-lg md:text-2xl font-bold mb-4 md:mb-8 lang-zh">产品规格</h2>
+<h2 class="text-lg md:text-2xl font-bold mb-4 md:mb-8 lang-en hidden">Product Specifications</h2>
+<div class="card-blur p-4 md:p-6 rounded-lg space-y-6">
+<!-- 卫星通信网络 -->
+<div>
+<h3 class="text-base font-medium mb-3 text-[#FF6B00] lang-zh">卫星通信网络</h3>
+<h3 class="text-base font-medium mb-3 text-[#FF6B00] lang-en hidden">Satellite Communication Network</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<div class="flex justify-between">
+<span class="text-sm lang-zh">频段</span>
+<span class="text-sm lang-en hidden">Frequency Band</span>
+<span class="text-sm text-gray-300 lang-zh">上行 1980MHz-2010MHz<br>下行 2170MHz-2200MHz</span>
+<span class="text-sm text-gray-300 lang-en hidden">Uplink 1980MHz-2010MHz<br>Downlink 2170MHz-2200MHz</span>
+</div>
+<div class="flex justify-between">
+<span class="text-sm lang-zh">发射功率</span>
+<span class="text-sm lang-en hidden">Transmit Power</span>
+<span class="text-sm text-gray-300">2W</span>
+</div>
+<div class="flex justify-between">
+<span class="text-sm lang-zh">话音</span>
+<span class="text-sm lang-en hidden">Voice</span>
+<span class="text-sm text-gray-300">1.2/2.4/4Kbps</span>
+</div>
+<div class="flex justify-between">
+<span class="text-sm lang-zh">短消息</span>
+<span class="text-sm lang-en hidden">Short Message</span>
+<span class="text-sm text-gray-300 lang-zh">单条短消息长度 140 字节</span>
+<span class="text-sm text-gray-300 lang-en hidden">Single message length 140 bytes</span>
+</div>
+</div>
+</div>
+
+<!-- 卫星定位 -->
+<div>
+<h3 class="text-base font-medium mb-3 text-[#FF6B00] lang-zh">卫星定位</h3>
+<h3 class="text-base font-medium mb-3 text-[#FF6B00] lang-en hidden">Satellite Positioning</h3>
+<div class="flex justify-between">
+<span class="text-sm lang-zh">频段</span>
+<span class="text-sm lang-en hidden">Frequency Band</span>
+<span class="text-sm text-gray-300">BD2 B1, GPS L1</span>
+</div>
+</div>
+
+<!-- 按键 -->
+<div>
+<h3 class="text-base font-medium mb-3 text-[#FF6B00] lang-zh">按键</h3>
+<h3 class="text-base font-medium mb-3 text-[#FF6B00] lang-en hidden">Buttons</h3>
+<div class="flex justify-between">
+<span class="text-sm lang-zh">功能按键</span>
+<span class="text-sm lang-en hidden">Function Buttons</span>
+<span class="text-sm text-gray-300 lang-zh">开关机按键、紧急求救按键</span>
+<span class="text-sm text-gray-300 lang-en hidden">Power button, Emergency SOS button</span>
+</div>
+</div>
+
+<!-- 显示屏 -->
+<div>
+<h3 class="text-base font-medium mb-3 text-[#FF6B00] lang-zh">显示屏</h3>
+<h3 class="text-base font-medium mb-3 text-[#FF6B00] lang-en hidden">Display Screen</h3>
+<div class="space-y-2">
+<div class="flex justify-between">
+<span class="text-sm lang-zh">显示内容</span>
+<span class="text-sm lang-en hidden">Display Content</span>
+<span class="text-sm text-gray-300 lang-zh">日期、时间</span>
+<span class="text-sm text-gray-300 lang-en hidden">Date, Time</span>
+</div>
+<div class="flex justify-between">
+<span class="text-sm"></span>
+<span class="text-sm text-gray-300 lang-zh">经纬度、海拔高度、速度</span>
+<span class="text-sm text-gray-300 lang-en hidden">Latitude/Longitude, Altitude, Speed</span>
+</div>
+<div class="flex justify-between">
+<span class="text-sm"></span>
+<span class="text-sm text-gray-300 lang-zh">电池电量、蓝牙连接状态、卫星信号强度</span>
+<span class="text-sm text-gray-300 lang-en hidden">Battery Level, Bluetooth Status, Satellite Signal Strength</span>
+</div>
+<div class="flex justify-between">
+<span class="text-sm"></span>
+<span class="text-sm text-gray-300 lang-zh">来电、短信等提示，来电号码显示</span>
+<span class="text-sm text-gray-300 lang-en hidden">Call/SMS Notifications, Caller ID Display</span>
+</div>
+</div>
+</div>
+
+<!-- 接口 -->
+<div>
+<h3 class="text-base font-medium mb-3 text-[#FF6B00] lang-zh">接口</h3>
+<h3 class="text-base font-medium mb-3 text-[#FF6B00] lang-en hidden">Interfaces</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<div class="flex justify-between">
+<span class="text-sm lang-zh">无线接口</span>
+<span class="text-sm lang-en hidden">Wireless Interface</span>
+<span class="text-sm text-gray-300">Bluetooth</span>
+</div>
+<div class="flex justify-between">
+<span class="text-sm lang-zh">硬件接口</span>
+<span class="text-sm lang-en hidden">Hardware Interface</span>
+<span class="text-sm text-gray-300 lang-zh">SIM 卡槽×1, Type-C×1</span>
+<span class="text-sm text-gray-300 lang-en hidden">SIM Card Slot×1, Type-C×1</span>
+</div>
+</div>
+</div>
+
+<!-- 整机参数 -->
+<div>
+<h3 class="text-base font-medium mb-3 text-[#FF6B00] lang-zh">整机参数</h3>
+<h3 class="text-base font-medium mb-3 text-[#FF6B00] lang-en hidden">Overall Parameters</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<div class="flex justify-between">
+<span class="text-sm lang-zh">外观尺寸</span>
+<span class="text-sm lang-en hidden">Dimensions</span>
+<span class="text-sm text-gray-300 lang-zh">主机: 268mm×125mm×54mm<br>按键盒: 108mm×65mm×32mm</span>
+<span class="text-sm text-gray-300 lang-en hidden">Main Unit: 268mm×125mm×54mm<br>Button Box: 108mm×65mm×32mm</span>
+</div>
+<div class="flex justify-between">
+<span class="text-sm lang-zh">电池容量</span>
+<span class="text-sm lang-en hidden">Battery Capacity</span>
+<span class="text-sm text-gray-300">3.85V 5000mAh</span>
+</div>
+<div class="flex justify-between">
+<span class="text-sm lang-zh">工作温度</span>
+<span class="text-sm lang-en hidden">Operating Temperature</span>
+<span class="text-sm text-gray-300">-20℃~55℃</span>
+</div>
+<div class="flex justify-between">
+<span class="text-sm lang-zh">保存温度</span>
+<span class="text-sm lang-en hidden">Storage Temperature</span>
+<span class="text-sm text-gray-300">-40℃~85℃</span>
+</div>
+<div class="flex justify-between">
+<span class="text-sm lang-zh">防护等级</span>
+<span class="text-sm lang-en hidden">Protection Rating</span>
+<span class="text-sm text-gray-300">IP67</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- 行业应用案例 -->
+<section id="cases" class="px-4 py-6 md:py-12">
+<div class="container mx-auto">
+<h2 class="text-lg md:text-2xl font-bold mb-4 md:mb-8 lang-zh">行业应用案例</h2>
+<h2 class="text-lg md:text-2xl font-bold mb-4 md:mb-8 lang-en hidden">Industry Application Cases</h2>
+<div class="overflow-x-auto">
+<div class="flex space-x-4 md:space-x-6" style="width: fit-content">
+<!-- 极氪案例 -->
+<div class="card-blur rounded-lg overflow-hidden block flex-shrink-0 cursor-pointer" style="width: 280px" 
+    data-url="https://www.toutiao.com/article/7409977902852227624/?&source=m_redirect" 
+    onclick="handleCaseClick(this)">
+<img src="https://ts1.tc.mm.bing.net/th/id/R-C.6a85b06048098e89713b437af7d25d96?rik=Z3ZzeDDrlS6%2f7A&riu=http%3a%2f%2fs.laoyaoba.com%2fjwImg%2f1403820532345.0273.png&ehk=SVNQ4Ucqb2nxML97DQJZ6%2b05YK7IeWNdOAI43bTmN4w%3d&risl=&pid=ImgRaw&r=0"
+class="w-full h-[160px] object-cover" alt="极氪001 FR">
+<div class="p-4">
+<h3 class="text-sm font-medium mb-2 lang-zh">极氪 001 FR 首次实现卫星通信量产上车</h3>
+<h3 class="text-sm font-medium mb-2 lang-en hidden">Zeekr 001 FR First Mass Production Vehicle with Satellite Communication</h3>
+<p class="text-xs text-gray-300 line-clamp-2 lang-zh">2023 年 10 月 27 日量产交付，用户可在无地面网络时自由接打卫星电话和收发卫星消息</p>
+<p class="text-xs text-gray-300 line-clamp-2 lang-en hidden">Mass production delivery on October 27, 2023, users can freely make satellite calls and send/receive satellite messages without ground network</p>
+</div>
+</div>
+
+<!-- 仰望案例 -->
+<div class="card-blur rounded-lg overflow-hidden block flex-shrink-0 cursor-pointer" style="width: 280px"
+    data-url="https://www.toutiao.com/article/7362763665819451955/?&source=m_redirect"
+    onclick="handleCaseClick(this)">
+<img src="https://www.yangwangauto.com/content/dam/r-site/cn/car/car-type-section1-bg.jpg"
+class="w-full h-[160px] object-cover" alt="仰望U8">
+<div class="p-4">
+<h3 class="text-sm font-medium mb-2 lang-zh">比亚迪仰望 U8 搭载天通一号卫星通信系统</h3>
+<h3 class="text-sm font-medium mb-2 lang-en hidden">BYD Yangwang U8 Equipped with Tiantong-1 Satellite Communication System</h3>
+<p class="text-xs text-gray-300 line-clamp-2 lang-zh">实现全国范围双向语音通话和短信收发功能</p>
+<p class="text-xs text-gray-300 line-clamp-2 lang-en hidden">Achieves nationwide two-way voice calls and SMS functionality</p>
+</div>
+</div>
+
+<!-- 小米案例 -->
+<div class="card-blur rounded-lg overflow-hidden block flex-shrink-0 cursor-pointer" style="width: 280px"
+    data-url="https://www.dongchedi.com/article/7352130196687815183"
+    onclick="handleCaseClick(this)">
+<img src="https://articleimg.xbiao.com/2023/1228/202312281703760184360.jpg"
+class="w-full h-[160px] object-cover" alt="小米汽车">
+<div class="p-4">
+<h3 class="text-sm font-medium mb-2 lang-zh">小米汽车布局卫星通信技术</h3>
+<h3 class="text-sm font-medium mb-2 lang-en hidden">Xiaomi Auto's Satellite Communication Technology Layout</h3>
+<p class="text-xs text-gray-300 line-clamp-2 lang-zh">申请"对星方法、装置、介质及车辆"专利，提升通信质量</p>
+<p class="text-xs text-gray-300 line-clamp-2 lang-en hidden">Patents "Satellite Alignment Method, Device, Medium and Vehicle" to improve communication quality</p>
+</div>
+</div>
+
+<!-- 华为案例 -->
+<div class="card-blur rounded-lg overflow-hidden block flex-shrink-0" style="width: 280px">
+<img src="https://news.meijiezhushou.com.cn:8101/imgcache/c2799d4ef362411e859c7d9940207061.png"
+class="w-full h-[160px] object-cover" alt="华为星河通信">
+<div class="p-4">
+<h3 class="text-sm font-medium mb-2 lang-zh">尊界 S800 首发华为"星河通信"技术</h3>
+<h3 class="text-sm font-medium mb-2 lang-en hidden">Zunjie S800 Debuts Huawei's "Galaxy Communication" Technology</h3>
+<p class="text-xs text-gray-300 line-clamp-2 lang-zh">支持分布式车载卫星通信，具备双网双待智能切换能力</p>
+<p class="text-xs text-gray-300 line-clamp-2 lang-en hidden">Supports distributed vehicle satellite communication with dual-network standby and intelligent switching capability</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 微信提示弹窗 -->
+<div id="wechatTips" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 mx-4 max-w-sm w-full">
+        <h3 class="text-lg font-medium text-gray-900 mb-4 lang-zh">提示</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-4 lang-en hidden">Tips</h3>
+        <p class="text-sm text-gray-600 mb-6 lang-zh">由于微信限制，请点击右上角"..."，选择"在浏览器打开"查看详情</p>
+        <p class="text-sm text-gray-600 mb-6 lang-en hidden">Due to WeChat restrictions, please click "..." in the top right corner and select "Open in Browser" to view details</p>
+        <div class="flex justify-end">
+            <button onclick="closeWechatTips()" class="px-4 py-2 bg-[#FF6B00] text-white rounded-lg text-sm lang-zh">知道了</button>
+            <button onclick="closeWechatTips()" class="px-4 py-2 bg-[#FF6B00] text-white rounded-lg text-sm lang-en hidden">Got it</button>
+        </div>
+    </div>
+</div>
+
+<!-- 二维码弹窗 -->
+<div id="qrCodeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 mx-4 max-w-sm w-full">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-medium text-gray-900 lang-zh">扫码咨询</h3>
+            <h3 class="text-lg font-medium text-gray-900 lang-en hidden">Scan QR Code</h3>
+            <button onclick="closeQRCode()" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="flex flex-col items-center space-y-4">
+            <img src="https://img.picui.cn/free/2025/03/27/67e504a90819b.png" 
+                 alt="咨询二维码" 
+                 class="w-48 h-48 object-cover">
+            <p class="text-sm text-gray-600 text-center lang-zh">扫描上方二维码，添加客服微信咨询</p>
+            <p class="text-sm text-gray-600 text-center lang-en hidden">Scan the QR code above to contact customer service via WeChat</p>
+            <div class="text-center">
+                <i class="fab fa-weixin text-2xl text-[#07C160]"></i>
+                <p class="text-xs text-gray-500 mt-1 lang-zh">微信咨询</p>
+                <p class="text-xs text-gray-500 mt-1 lang-en hidden">WeChat</p>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- 渠道合作 -->
+<section class="px-4 py-6 md:py-12 bg-[#001433]">
+<div class="container mx-auto">
+<h2 class="text-lg md:text-2xl font-bold mb-4 md:mb-8 lang-zh">渠道合作</h2>
+<h2 class="text-lg md:text-2xl font-bold mb-4 md:mb-8 lang-en hidden">Channel Cooperation</h2>
+<div class="card-blur p-6 md:p-8 rounded-lg">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- 返点政策 -->
+    <div class="text-center">
+        <i class="fas fa-percentage icon-feature text-3xl mb-3"></i>
+        <h3 class="text-base font-medium mb-3 lang-zh">区域代理返点政策</h3>
+        <h3 class="text-base font-medium mb-3 lang-en hidden">Regional Agent Rebate Policy</h3>
+        <div class="space-y-2">
+            <p class="text-sm text-gray-300 lang-zh">首年代理返点</p>
+            <p class="text-sm text-gray-300 lang-en hidden">First Year Agent Rebate</p>
+            <p class="text-sm text-gray-300 lang-zh">代理阶梯返点</p>
+            <p class="text-sm text-gray-300 lang-en hidden">Tiered Agent Rebate</p>
+            <p class="text-sm text-gray-300 lang-zh">大客户定制化方案</p>
+            <p class="text-sm text-gray-300 lang-en hidden">Customized Solutions for Key Clients</p>
+        </div>
+    </div>
+    
+    <!-- 营销支持 -->
+    <div class="text-center">
+        <i class="fas fa-bullhorn icon-feature text-3xl mb-3"></i>
+        <h3 class="text-base font-medium mb-3 lang-zh">营销支持</h3>
+        <h3 class="text-base font-medium mb-3 lang-en hidden">Marketing Support</h3>
+        <div class="space-y-2">
+            <p class="text-sm text-gray-300 lang-zh">市场推广物料支持</p>
+            <p class="text-sm text-gray-300 lang-en hidden">Marketing Material Support</p>
+            <p class="text-sm text-gray-300 lang-zh">线上线下活动支持</p>
+            <p class="text-sm text-gray-300 lang-en hidden">Online & Offline Event Support</p>
+            <p class="text-sm text-gray-300 lang-zh">区域市场独家授权</p>
+            <p class="text-sm text-gray-300 lang-en hidden">Exclusive Regional Authorization</p>
+        </div>
+    </div>
+    
+    <!-- 技术支持 -->
+    <div class="text-center">
+        <i class="fas fa-tools icon-feature text-3xl mb-3"></i>
+        <h3 class="text-base font-medium mb-3 lang-zh">技术支持</h3>
+        <h3 class="text-base font-medium mb-3 lang-en hidden">Technical Support</h3>
+        <div class="space-y-2">
+            <p class="text-sm text-gray-300 lang-zh">产品技术培训</p>
+            <p class="text-sm text-gray-300 lang-en hidden">Product Technical Training</p>
+            <p class="text-sm text-gray-300 lang-zh">7×24小时售后支持</p>
+            <p class="text-sm text-gray-300 lang-en hidden">24/7 After-sales Support</p>
+            <p class="text-sm text-gray-300 lang-zh">定期技术交流会</p>
+            <p class="text-sm text-gray-300 lang-en hidden">Regular Technical Exchange</p>
+        </div>
+    </div>
+</div>
+
+<div class="mt-8 text-center">
+    <button onclick="showQRCode()" class="btn-primary !rounded-button px-8 py-3 text-sm font-medium lang-zh">
+        <i class="fas fa-qrcode mr-2"></i>扫码咨询
+    </button>
+    <button onclick="showQRCode()" class="btn-primary !rounded-button px-8 py-3 text-sm font-medium lang-en hidden">
+        <i class="fas fa-qrcode mr-2"></i>Scan QR Code
+    </button>
+</div>
+</div>
+</div>
+
+<!-- 二维码弹窗 -->
+<div id="qrCodeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 mx-4 max-w-sm w-full">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-medium text-gray-900 lang-zh">扫码咨询</h3>
+            <h3 class="text-lg font-medium text-gray-900 lang-en hidden">Scan QR Code</h3>
+            <button onclick="closeQRCode()" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="flex flex-col items-center space-y-4">
+            <img src="https://img.picui.cn/free/2025/03/27/67e504a90819b.png" 
+                 alt="咨询二维码" 
+                 class="w-48 h-48 object-cover">
+            <p class="text-sm text-gray-600 text-center lang-zh">扫描上方二维码，添加客服微信咨询</p>
+            <p class="text-sm text-gray-600 text-center lang-en hidden">Scan the QR code above to contact customer service via WeChat</p>
+            <div class="text-center">
+                <i class="fab fa-weixin text-2xl text-[#07C160]"></i>
+                <p class="text-xs text-gray-500 mt-1 lang-zh">微信咨询</p>
+                <p class="text-xs text-gray-500 mt-1 lang-en hidden">WeChat</p>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+</main>
+
+<script>
+// 语言切换功能
+const langToggle = document.getElementById('langToggle');
+const zhElements = document.querySelectorAll('.lang-zh');
+const enElements = document.querySelectorAll('.lang-en');
+
+langToggle.addEventListener('change', () => {
+    zhElements.forEach(el => el.classList.toggle('hidden'));
+    enElements.forEach(el => el.classList.toggle('hidden'));
+});
+
+// 移动端菜单控制
+const menuBtn = document.getElementById('menuBtn');
+const mobileMenu = document.querySelector('.mobile-menu');
+
+menuBtn.addEventListener('click', () => {
+mobileMenu.classList.toggle('active');
+});
+
+// 点击菜单项后关闭菜单
+document.querySelectorAll('.mobile-menu a').forEach(link => {
+link.addEventListener('click', () => {
+mobileMenu.classList.remove('active');
+});
+});
+
+// 横向滚动控制
+const scrollContainer = document.querySelector('.overflow-x-auto');
+const leftBtn = document.querySelector('.fa-chevron-left').parentElement;
+const rightBtn = document.querySelector('.fa-chevron-right').parentElement;
+
+leftBtn.addEventListener('click', () => {
+scrollContainer.scrollBy({ left: -380, behavior: 'smooth' });
+});
+
+rightBtn.addEventListener('click', () => {
+scrollContainer.scrollBy({ left: 380, behavior: 'smooth' });
+});
+
+// 更新滚动指示器
+const updateScrollIndicators = () => {
+const indicators = document.querySelectorAll('.rounded-full');
+const scrollPosition = scrollContainer.scrollLeft;
+const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+
+indicators.forEach((indicator, index) => {
+if (index === 0 && scrollPosition < maxScroll / 2) {
+indicator.classList.add('opacity-100');
+indicator.classList.remove('opacity-50');
+} else if (index === 1 && scrollPosition >= maxScroll / 2) {
+indicator.classList.add('opacity-100');
+indicator.classList.remove('opacity-50');
+} else {
+indicator.classList.add('opacity-50');
+indicator.classList.remove('opacity-100');
+}
+});
+};
+
+scrollContainer.addEventListener('scroll', updateScrollIndicators);
+updateScrollIndicators();
+
+// 检测是否在微信环境
+function isWechat() {
+    return /MicroMessenger/i.test(navigator.userAgent);
+}
+
+// 处理案例点击
+function handleCaseClick(element) {
+    const url = element.getAttribute('data-url');
+    if (isWechat()) {
+        document.getElementById('wechatTips').style.display = 'flex';
+    } else {
+        window.open(url, '_blank');
+    }
+}
+
+// 关闭微信提示
+function closeWechatTips() {
+    document.getElementById('wechatTips').style.display = 'none';
+}
+
+// 显示二维码弹窗
+function showQRCode() {
+    document.getElementById('qrCodeModal').style.display = 'flex';
+    // 添加点击外部关闭
+    document.getElementById('qrCodeModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeQRCode();
+        }
+    });
+    // 关闭移动端菜单（如果打开的话）
+    mobileMenu.classList.remove('active');
+}
+
+// 关闭二维码弹窗
+function closeQRCode() {
+    document.getElementById('qrCodeModal').style.display = 'none';
+}
+
+// 添加 ESC 键关闭功能
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeQRCode();
+        closeWechatTips();
+    }
+});
+</script>
+</body>
+</html>
